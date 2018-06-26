@@ -36,9 +36,11 @@ of the corresponding solver.
       $ make
 
 * To install targets to cmake install path
+      
       $ sudo make install
 
 * To uninstall targets
+      
       $ sudo make uninstall
 
 ## <img align="center" height="20" src="https://i.imgur.com/026nVBV.png"/> Unit Tests
