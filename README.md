@@ -18,8 +18,6 @@ Ifopt is a unified [Eigen]-based interface to use Nonlinear Programming solvers,
 
 ## <img align="center" height="20" src="https://i.imgur.com/x1morBF.png"/> Building
 
-* Install the cmake build tool [catkin]: ``$ sudo apt-get install ros-kinetic-catkin``
-
 * Install [Eigen]: ``$ sudo apt-get install libeigen3-dev``
     
 * Depending on which solver you want to use, install either [Ipopt] or [Snopt]. Follow the instructions provided here:
@@ -31,20 +29,23 @@ Ifopt is a unified [Eigen]-based interface to use Nonlinear Programming solvers,
 libraries and header files directly in the [CMakeLists.txt](https://github.com/ethz-adrl/ifopt/blob/fbf7acda4e3e42711031f65e015f6c9f84c87fbd/ifopt_ipopt/CMakeLists.txt#L16-L17) 
 of the corresponding solver.
      
-* Clone this repo into your [catkin] workspace and build
+* Clone this repo and build
 
-      $ cd catkin_workspace/src
       $ git clone https://github.com/ethz-adrl/ifopt.git
-      $ cd ..
-      $ catkin_make -DCMAKE_BUILD_TYPE=Release
-      $ source ./devel/setup.bash
-    
+      $ cd ifopt ; mkdir build ; cd build ; cmake .. -DBUILD_TEST=True
+      $ make
+
+* To install targets to cmake install path
+      $ sudo make install
+
+* To uninstall targets
+      $ sudo make uninstall
 
 ## <img align="center" height="20" src="https://i.imgur.com/026nVBV.png"/> Unit Tests
 
 Make sure everything installed correctly by running the unit tests through
 
-    $ catkin_make run_tests
+    $ make test
      
 This should also solve the [example problem](ifopt_core/include/ifopt/ex_problem.h) with your installed solvers. 
 If you have [IPOPT] installed and linked correctly, this should also execute the 
