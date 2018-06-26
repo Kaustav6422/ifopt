@@ -1,0 +1,3 @@
+get_filename_component(ifopt_core_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+set(ifopt_core_INCLUDE_DIRS "@ifopt_core_INCLUDE_DIRS@")
+set(ifopt_core_LIBRARIES "@ifopt_core_LIBRARIES@")

@@ -1,11 +1,15 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ifopt_snopt)
-
+##############
+## PREAMBLE ##
+##############
 add_compile_options(-std=c++11)
-
-find_package(catkin REQUIRED)
 find_package(ifopt_core REQUIRED)
-
+if(DEFINED BUILD_ROOT)
+  set(GTEST_DIR "${BUILD_ROOT}/third_party/gtest")
+else()
+  set(GTEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../third_party/gtest}")
+endif()
 
 ################
 ## Find SNOPT ##
@@ -29,74 +33,59 @@ if(${SNOPT76})
   message("SNOPT76 version >= SNOPT 7.6 detected")
 endif()
 
-
-#################################
-## Generate cmake config files ##
-#################################
-# These can then be used to "find_package(ifopt_snopt)"
-catkin_package(
-  INCLUDE_DIRS include ${SNOPT_INCLUDE_DIRS} ${ifopt_core_INCLUDE_DIRS}
-  LIBRARIES    ${PROJECT_NAME}
-)
-
-
 ###########
-## Build ##
+## BUILD ##
 ###########
-include_directories(
-  include
-  ${SNOPT_INCLUDE_DIRS}
-  ${ifopt_core_INCLUDE_DIRS}
-)
-
 if(${SNOPT76})
  add_library(${PROJECT_NAME} src/snopt76_adapter.cc)
 else()
  add_library(${PROJECT_NAME} src/snopt_adapter.cc)
 endif()
-
-target_link_libraries(${PROJECT_NAME}
+target_include_directories(${PROJECT_NAME} PUBLIC
+  include
+  ${SNOPT_INCLUDE_DIRS}
+  ${ifopt_core_INCLUDE_DIRS}
+)
+target_link_libraries(${PROJECT_NAME} PUBLIC
   ${ifopt_core_LIBRARIES}
   ${SNOPT_LIB1}
   ${SNOPT_LIB2}
 )
 
+############
+## EXPORT ##
+############
+# for local build
+export(PACKAGE ifopt_snopt)
+get_property(ifopt_snopt_INCLUDE_DIRS DIRECTORY 
+  ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+get_property(ifopt_snopt_LIBRARIES TARGET ifopt_snopt PROPERTY LIBRARY_OUTPUT_NAME) 
+configure_file(ifopt_snoptConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/ifopt_snoptConfig.cmake" @ONLY)
+# for external build
+set(ifopt_snopt_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include include ${ifopt_core_INCLUDE_DIRS})
+set(ifopt_snopt_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/libifopt_snopt.a ${ifopt_core_LIBRARIES})
+configure_file(ifopt_snoptConfig.cmake.in
+  "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ifopt_snoptConfig.cmake" @ONLY)
 
 #############
-## Install ##
+## INSTALL ##
 #############
-# For this to work, first make sure IPOPT headers and library are installed
-# somewhere in the default search paths.
-# Mark library for installation
-install(
-  TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
-
-# Mark header files for installation
-install(
-  DIRECTORY include/ifopt_snopt/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-)
-
+install(FILES "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ifopt_snoptConfig.cmake"
+  DESTINATION share/ifopt_snopt/cmake COMPONENT dev)
+install(TARGETS ifopt_snopt DESTINATION lib)
+install(DIRECTORY include/ifopt_snopt DESTINATION include)
 
 #############
-## Testing ##
+## TESTING ##
 #############
-if (CATKIN_ENABLE_TESTING)
-catkin_add_gtest(${PROJECT_NAME}-test test/ex_test_snopt.cc)
-
-if(${SNOPT76})
-  target_compile_definitions(${PROJECT_NAME}-test PRIVATE SNOPT76_ON=1)
-endif()
-
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test 
-    ${PROJECT_NAME}
-    pthread
-  )
-endif()
+if(EXISTS ${GTEST_DIR} AND BUILD_TEST)
+  add_executable(ifopt_snopt-test
+      test/ex_test_snopt.cc
+      )
+  if(${SNOPT76})
+      target_compile_definitions(ifopt_snopt-test PRIVATE SNOPT_ON=1)
+  endif()
+  target_link_libraries(ifopt_snopt-test ifopt_snopt gtest gtest_main pthread)
+  add_test(NAME ifopt_snopt-test COMMAND ifopt_snopt-test)
 endif()
