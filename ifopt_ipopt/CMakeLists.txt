@@ -50,8 +50,8 @@ get_property(ifopt_ipopt_LIBRARIES TARGET ifopt_ipopt PROPERTY LIBRARY_OUTPUT_NA
 configure_file(ifopt_ipoptConfig.cmake.in
   "${PROJECT_BINARY_DIR}/ifopt_ipoptConfig.cmake" @ONLY)
 # for external build
-set(ifopt_ipopt_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include include ${ifopt_core_INCLUDE_DIRS})
-set(ifopt_ipopt_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/libifopt_ipopt.a ${ifopt_core_LIBRARIES})
+set(ifopt_ipopt_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include include ${ifopt_core_INCLUDE_DIRS} ${IPOPT_INCLUDE_DIRS})
+set(ifopt_ipopt_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/libifopt_ipopt.a ${ifopt_core_LIBRARIES} ${IPOPT_LIBRARIES})
 configure_file(ifopt_ipoptConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ifopt_ipoptConfig.cmake" @ONLY)
 

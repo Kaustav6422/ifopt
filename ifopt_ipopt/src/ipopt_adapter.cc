@@ -63,7 +63,7 @@ IpoptAdapter::SetOptions (Ipopt::SmartPtr<Ipopt::IpoptApplication> ipopt_app_)
   // https://www.coin-or.org/Ipopt/documentation/node40.html
 
   // Download and use additional solvers here: http://www.hsl.rl.ac.uk/ipopt/
-  ipopt_app_->Options()->SetStringValue("linear_solver", "ma27"); // 27, 57, 77, 86, 97
+  ipopt_app_->Options()->SetStringValue("linear_solver", "mumps"); // 27, 57, 77, 86, 97
 
   ipopt_app_->Options()->SetStringValue("hessian_approximation", "limited-memory");
   ipopt_app_->Options()->SetNumericValue("tol", 0.001);

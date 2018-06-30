@@ -25,7 +25,9 @@ add_library(ifopt_core STATIC
     src/leaves.cc
 )
 target_include_directories(ifopt_core PUBLIC include ${EIGEN3_INCLUDE_DIR})
-set_target_properties(ifopt_core PROPERTIES LINK_INTERFACE_LIBRARIES ${PROJECT_BINARY_DIR}/libifopt_core.a)
+set_target_properties(ifopt_core PROPERTIES 
+    LINK_INTERFACE_LIBRARIES ${PROJECT_BINARY_DIR}/libifopt_core.a
+    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 ############
 ## EXPORT ##

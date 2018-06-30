@@ -63,8 +63,8 @@ get_property(ifopt_snopt_LIBRARIES TARGET ifopt_snopt PROPERTY LIBRARY_OUTPUT_NA
 configure_file(ifopt_snoptConfig.cmake.in
   "${PROJECT_BINARY_DIR}/ifopt_snoptConfig.cmake" @ONLY)
 # for external build
-set(ifopt_snopt_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include include ${ifopt_core_INCLUDE_DIRS})
-set(ifopt_snopt_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/libifopt_snopt.a ${ifopt_core_LIBRARIES})
+set(ifopt_snopt_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include include ${ifopt_core_INCLUDE_DIRS} ${SNOPT_INCLUDE_DIRS})
+set(ifopt_snopt_LIBRARIES ${CMAKE_INSTALL_PREFIX}/lib/libifopt_snopt.a ${ifopt_core_LIBRARIES} ${SNOPT_LIB1} ${SNOPT_LIB2})
 configure_file(ifopt_snoptConfig.cmake.in
   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/ifopt_snoptConfig.cmake" @ONLY)
 
