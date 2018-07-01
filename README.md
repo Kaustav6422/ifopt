@@ -1,3 +1,7 @@
+I created this fork because I wanted to learn more about CMake; particularly exporting/importing packages with different sets of dependencies.  This repo was chosen because of its small number of source files, sufficient unit tests, and file structure with submodules.  The submodules can be built together or separately.  As a bonus, the `ifopt_ipopt` and `ifopt_snopt` submodules have third party dependencies to be built against.
+
+The information below has been modified from the original repo to include build instructions for the reorganized pure CMake build support that I added.
+
 ### <img src="https://i.imgur.com/ZOfGZwB.png" height="60" />
 
 [![Build Status](https://ci.leggedrobotics.com/buildStatus/icon?job=github_ethz-adrl/ifopt/master)](https://ci.leggedrobotics.com/job/github_ethz-adrl/job/ifopt/job/master/) [<img height="20" src="https://i.imgur.com/ZqRckbJ.png"/>](http://docs.ros.org/api/ifopt_core/html/index.html)
@@ -18,8 +22,6 @@ Ifopt is a unified [Eigen]-based interface to use Nonlinear Programming solvers,
 
 ## <img align="center" height="20" src="https://i.imgur.com/x1morBF.png"/> Building
 
-* Install the cmake build tool [catkin]: ``$ sudo apt-get install ros-kinetic-catkin``
-
 * Install [Eigen]: ``$ sudo apt-get install libeigen3-dev``
     
 * Depending on which solver you want to use, install either [Ipopt] or [Snopt]. Follow the instructions provided here:
@@ -28,29 +30,47 @@ Ifopt is a unified [Eigen]-based interface to use Nonlinear Programming solvers,
      * http://www.sbsi-sol-optimize.com/asp/sol_snopt.htm
 
 * To build [ifopt_snopt](ifopt_snopt) or [ifopt_ipopt](ifopt_ipopt) set the location of the shared 
-libraries and header files directly in the [CMakeLists.txt](https://github.com/ethz-adrl/ifopt/blob/fbf7acda4e3e42711031f65e015f6c9f84c87fbd/ifopt_ipopt/CMakeLists.txt#L16-L17) 
-of the corresponding solver.
+libraries and header files directly in the CMakeLists.txt of the corresponding solver.
      
-* Clone this repo into your [catkin] workspace and build
+* Navigate to desired directory and clone the repo there
 
-      $ cd catkin_workspace/src
-      $ git clone https://github.com/ethz-adrl/ifopt.git
-      $ cd ..
-      $ catkin_make -DCMAKE_BUILD_TYPE=Release
-      $ source ./devel/setup.bash
+      $ git clone https://github.com/jwdinius/ifopt.git
     
+* If you wish to build unit tests (recommended), create a `third_party` directory and clone `googletest` into it
+
+      $ cd ifopt ; mkdir third_party ; cd third_party
+      $ git clone https://github.com/google/googletest.git gtest
+      
+* Configure the build (remove `-DBUILD_TEST=True` if you don't wish to build unit tests)
+
+      $ cd .. ; mkdir build ; cd build ;
+      $ cmake .. -DBUILD_TEST=True
+      
+* Build with `make`
+      
+      $ make
 
 ## <img align="center" height="20" src="https://i.imgur.com/026nVBV.png"/> Unit Tests
 
 Make sure everything installed correctly by running the unit tests through
 
-    $ catkin_make run_tests
+    $ make test
      
 This should also solve the [example problem](ifopt_core/include/ifopt/ex_problem.h) with your installed solvers. 
 If you have [IPOPT] installed and linked correctly, this should also execute the 
 binary [ifopt_ipopt-test](ifopt_ipopt/test/ex_test_ipopt.cc). 
+
+## (Un)Install
+You can install the build targets of this project to the CMake install location:
+
+    $ make install
     
-     
+You made need special privileges to install to this directory; in that case, prepend the command above with `sudo`.  Similarly, you can uninstall/remove with
+
+    $ make uninstall
+    
+Again, you may need to use `sudo`.
+
 ## <img align="center" height="20" src="https://i.imgur.com/vAYeCzC.png"/> Usage
 
 For an example of how to use this to efficiently generate dynamic motions for legged robots, check-out [towr].
